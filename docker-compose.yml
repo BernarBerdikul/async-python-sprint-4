@@ -1,0 +1,49 @@
+version: "3.8"
+
+services:
+  sprint_4_app:
+    container_name: sprint_4_app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      CONFIG_FILE: "config.yaml"
+    entrypoint: "./entrypoint.sh"
+    volumes:
+      - ./src:/app/src/
+    networks:
+      - sprint_4_network
+    ports:
+      - "8000:8000"
+    depends_on:
+      sprint_4_postgres_db:
+        condition: service_healthy
+
+  sprint_4_postgres_db:
+    container_name: sprint_4_postgres_db
+    image: postgres:15.1-alpine
+    volumes:
+      - sprint_4_postgres_data:/var/lib/postgresql/data/
+    environment:
+      POSTGRES_DB: sprint_4
+      POSTGRES_USER: sprint_4
+      POSTGRES_PASSWORD: sprint_4
+    expose:
+      - 5432
+    ports:
+      - "5432:5432"
+    networks:
+      - sprint_4_network
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U sprint_4" ]
+      interval: 5s
+      timeout: 20s
+      retries: 100
+
+networks:
+  sprint_4_network:
+    name: sprint_4_network
+
+volumes:
+  sprint_4_postgres_data:
+    driver: local

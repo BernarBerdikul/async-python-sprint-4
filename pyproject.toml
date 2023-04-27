@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "async-python-sprint-4"
+version = "0.1.0"
+description = "sprint 4 in Async Python Course in Yandex Praktikum"
+authors = ["Bernar Berdikul <dabeerman32215@gmail.com>"]
+readme = "README.md"
+packages = [{include = "async_python_sprint_4"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+fastapi = "^0.95.1"
+pydantic = "^1.10.7"
+alembic = "^1.10.4"
+uvicorn = "^0.21.1"
+orjson = "^3.8.10"
+asyncpg = "^0.27.0"
+pre-commit = "^3.2.2"
+sqlmodel = "^0.0.8"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

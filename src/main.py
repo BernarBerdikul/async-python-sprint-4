@@ -1,9 +1,15 @@
+import http
+
+import sqlalchemy as sa
 import uvicorn
-from fastapi import FastAPI
+from fastapi import Depends, FastAPI, HTTPException
 from fastapi.responses import ORJSONResponse
+from sqlalchemy.exc import DatabaseError, OperationalError
+from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.middleware.base import BaseHTTPMiddleware
 
 from src import settings
+from src.db.db import get_async_session
 from src.middlewares import add_process_time_header
 
 
@@ -24,10 +30,29 @@ def create_app() -> FastAPI:
     current_app.add_middleware(BaseHTTPMiddleware, dispatch=add_process_time_header)
 
     # Подключаем роутеры к серверу
+
     return current_app
 
 
 app = create_app()
+
+
+@app.get(path="/ping/", status_code=http.HTTPStatus.OK, tags=["status"])
+async def ping(session: AsyncSession = Depends(get_async_session)):
+    try:
+        # Выполните любой запрос, чтобы проверить доступность БД
+        result = await session.scalar(sa.select(sa.text("version();")))
+        return {"status": "OK", "version": result}
+    except OperationalError as e:
+        return HTTPException(
+            status_code=http.HTTPStatus.INTERNAL_SERVER_ERROR,
+            detail={"status": "ERROR", "detail": str(e)},
+        )
+    except DatabaseError as e:
+        return HTTPException(
+            status_code=http.HTTPStatus.INTERNAL_SERVER_ERROR,
+            detail={"status": "ERROR", "detail": str(e)},
+        )
 
 
 if __name__ == "__main__":
@@ -39,4 +64,5 @@ if __name__ == "__main__":
         "main:app",
         host=settings.app.host,
         port=settings.app.port,
+        reload=True,
     )

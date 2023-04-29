@@ -37,8 +37,6 @@ target_metadata.naming_convention = {
     "pk": "pk_%(table_name)s",
 }
 
-exclude_tables = settings.app.db_exclude_tables
-
 
 def filter_db_objects(
     object,  # noqa: indirect usage
@@ -47,8 +45,6 @@ def filter_db_objects(
     *args,  # noqa: indirect usage
     **kwargs,  # noqa: indirect usage
 ) -> bool:
-    if type_ == "table":
-        return name not in exclude_tables
     if type_ == "index" and name.startswith("idx") and name.endswith("geom"):
         return False
     return True

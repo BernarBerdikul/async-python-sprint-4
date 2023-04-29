@@ -44,7 +44,8 @@ class Settings(BaseSettings):
     postgres: Postgres
 
 
-settings_path = Path(__file__).parent / os.getenv("CONFIG_FILE")  # type: ignore
+config_file = os.getenv("CONFIG_FILE", "config.local.yaml")
+settings_path = Path(__file__).parent / config_file  # type: ignore
 with settings_path.open("r") as f:
     yaml_settings = yaml.load(f, Loader=yaml.Loader)
 

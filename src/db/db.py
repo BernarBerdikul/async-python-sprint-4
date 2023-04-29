@@ -13,6 +13,7 @@ async_engine = create_async_engine(
 
 
 async def get_async_session() -> AsyncSession:
+    """Get async session."""
     async_session = sessionmaker(
         bind=async_engine,
         class_=AsyncSession,

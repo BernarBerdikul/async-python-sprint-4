@@ -4,11 +4,16 @@ from typing import Generator
 import pytest
 import pytest_asyncio
 from httpx import AsyncClient
+from pytest_factoryboy import register
 from sqlalchemy.orm import sessionmaker
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from src.db.db import async_engine
 from src.main import app
+from tests.factories.short_url import ShortUrlFactory
+
+
+register(ShortUrlFactory, "short_url")
 
 
 @pytest.fixture(scope="session")

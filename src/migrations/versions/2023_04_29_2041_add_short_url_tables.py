@@ -1,8 +1,8 @@
 """add short url tables
 
-Revision ID: 6c19200d0729
+Revision ID: 53f38594546d
 Revises: 
-Create Date: 2023-04-29 18:37:39.926576
+Create Date: 2023-04-29 20:41:26.719079
 
 """
 from alembic import op
@@ -11,7 +11,7 @@ import sqlmodel
 
 
 # revision identifiers, used by Alembic.
-revision = '6c19200d0729'
+revision = '53f38594546d'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -22,12 +22,13 @@ def upgrade() -> None:
     op.create_table('short_url',
     sa.Column('short_url', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
     sa.Column('id', sqlmodel.sql.sqltypes.GUID(), server_default=sa.text('gen_random_uuid()'), nullable=False),
+    sa.Column('original_url', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
     sa.Column('usage_count', sa.Integer(), nullable=False),
     sa.Column('is_removed', sa.Boolean(), nullable=False),
-    sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('short_url')
+    sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_short_url_id'), 'short_url', ['id'], unique=True)
+    op.create_index(op.f('ix_short_url_short_url'), 'short_url', ['short_url'], unique=True)
     op.create_table('short_url_log',
     sa.Column('client', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
     sa.Column('id', sqlmodel.sql.sqltypes.GUID(), server_default=sa.text('gen_random_uuid()'), nullable=False),
@@ -46,6 +47,7 @@ def downgrade() -> None:
     op.drop_index(op.f('ix_short_url_log_short_url_id'), table_name='short_url_log')
     op.drop_index(op.f('ix_short_url_log_id'), table_name='short_url_log')
     op.drop_table('short_url_log')
+    op.drop_index(op.f('ix_short_url_short_url'), table_name='short_url')
     op.drop_index(op.f('ix_short_url_id'), table_name='short_url')
     op.drop_table('short_url')
     # ### end Alembic commands ###

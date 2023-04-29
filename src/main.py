@@ -9,6 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.middleware.base import BaseHTTPMiddleware
 
 from src import settings
+from src.api.v1 import api_v1_router
 from src.db.db import get_async_session
 from src.middlewares import add_process_time_header
 
@@ -18,10 +19,10 @@ def create_app() -> FastAPI:
         title=settings.app.project_name,
         description=settings.app.description,
         version=settings.app.version,
-        # Адрес документации в красивом интерфейсе
+        # OpenAPI interface address
         docs_url="/api/openapi",
         redoc_url="/api/redoc",
-        # Адрес документации в формате OpenAPI
+        # OpenAPI docs address
         openapi_url=f"{settings.app.api_doc_prefix}/openapi.json",
         debug=settings.app.debug,
         default_response_class=ORJSONResponse,
@@ -29,8 +30,8 @@ def create_app() -> FastAPI:
     # Middlewares
     current_app.add_middleware(BaseHTTPMiddleware, dispatch=add_process_time_header)
 
-    # Подключаем роутеры к серверу
-
+    # Routers
+    current_app.include_router(api_v1_router)
     return current_app
 
 

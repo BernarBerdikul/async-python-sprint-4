@@ -1,2 +1,2 @@
-from .mixins import *
+from .base import *
 from .short_url import *

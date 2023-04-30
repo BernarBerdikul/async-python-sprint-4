@@ -55,7 +55,9 @@ class ShortUUID:
         return await self.encode(u)
 
     @staticmethod
-    async def _int_to_string(number: int, alphabet: list[str], padding: int | None = None) -> str:
+    async def _int_to_string(
+        number: int, alphabet: list[str], padding: int | None = None
+    ) -> str:
         """
         Convert a number to a string, using the given alphabet.
 

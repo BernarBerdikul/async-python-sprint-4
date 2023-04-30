@@ -4,28 +4,20 @@ import pytest
 from sqlalchemy import select
 
 from src.models import ShortUrl
-from tests.factories.short_url import ShortUrlFactory
 
 
 @pytest.mark.asyncio
-async def test_delete_success_short_url(async_client, async_session):
-    short_url = ShortUrlFactory()
-
-    async_session.add(short_url)
-    await async_session.commit()
-
+async def test_delete_success_short_url(async_client, async_session, short_url_instance):
     response = await async_client.delete(
-        url=f"/api/v1/short-urls/{short_url.short_url}/",
+        url=f"/api/v1/short-urls/{short_url_instance.short_url}/",
     )
-    print(short_url)
-    print(short_url.is_removed)
-    print("*"*100)
     assert response.status_code == http.HTTPStatus.NO_CONTENT
 
-    # async with async_engine.connect() as conn:
-    #     result = await conn.execute(select(ShortUrl).where(
-    #         ShortUrl.short_url == short_url,
-    #     ))
-    #     short_url = await result.fetchone()
-    # assert short_url.is_removed is True
+    # Get instance from database
+    async with async_session() as session:
+        result = await session.execute(
+            select(ShortUrl).filter(ShortUrl.id == short_url_instance.id)
+        )
+        instance = result.scalars().first()
+    assert instance.is_removed is True
 

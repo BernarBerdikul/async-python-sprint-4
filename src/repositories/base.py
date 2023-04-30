@@ -18,10 +18,6 @@ class AbstractRepository(ABC):
     async def get(self, *args, **kwargs) -> ModelType:
         raise NotImplementedError
 
-    # @abstractmethod
-    # async def list(self, *args, **kwargs):
-    #     raise NotImplementedError
-
     @abstractmethod
     async def add(self, *args, **kwargs) -> ModelType:
         raise NotImplementedError
@@ -30,10 +26,18 @@ class AbstractRepository(ABC):
     async def bulk_add(self, *args, **kwargs) -> list[ModelType]:
         raise NotImplementedError
 
-    # @abstractmethod
-    # async def update(self, *args, **kwargs):
-    #     raise NotImplementedError
-
     @abstractmethod
     async def delete(self, *args, **kwargs) -> None:
+        raise NotImplementedError
+
+    @abstractmethod
+    async def update_usage_count(self, *args, **kwargs) -> None:
+        raise NotImplementedError
+
+    @abstractmethod
+    async def create_log_record(self, *args, **kwargs) -> None:
+        raise NotImplementedError
+
+    @abstractmethod
+    async def get_logs(self, *args, **kwargs) -> list[ModelType]:
         raise NotImplementedError

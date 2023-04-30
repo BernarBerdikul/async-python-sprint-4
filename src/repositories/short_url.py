@@ -1,7 +1,10 @@
+import uuid
+
 from sqlalchemy import select, update
 
-from src.models import ShortUrl, ShortUrlBulkCreate, ShortUrlCreate
+from src.models import ShortUrl, ShortUrlLog
 from src.repositories import AbstractRepository
+from src.schemas.short_url import ShortUrlBulkCreate, ShortUrlCreate
 from src.utils import shortuuid
 
 __all__ = ("ShortUrlRepository",)
@@ -45,5 +48,49 @@ class ShortUrlRepository(AbstractRepository):
 
     async def delete(self, short_url: str) -> None:
         """Soft delete short url."""
-        await self.session.execute(update(self.model).where(self.model.short_url == short_url).values(is_removed=True))
+        await self.session.execute(
+            update(self.model)
+            .where(self.model.short_url == short_url)
+            .values(is_removed=True)
+        )
         await self.session.commit()
+
+    async def update_usage_count(self, short_url_id: uuid.UUID) -> None:
+        """Update usage count."""
+        await self.session.execute(
+            update(self.model)
+            .where(self.model.id == short_url_id)
+            .values(usage_count=self.model.usage_count + 1)
+        )
+        await self.session.commit()
+
+    async def create_log_record(
+        self, short_url_id: uuid.UUID, client_info: str
+    ) -> None:
+        """Create log record."""
+        short_url_log = ShortUrlLog(
+            short_url_id=short_url_id,
+            client=client_info,
+        )
+        self.session.add(short_url_log)
+        await self.session.commit()
+
+    async def get_logs(
+        self,
+        short_url_id: uuid.UUID,
+        short_url: str,
+        limit: int,
+        offset: int,
+        full_info: bool,
+    ) -> list[ShortUrlLog]:
+        """Get short url logs."""
+        result = await self.session.execute(
+            select(ShortUrlLog)
+            .where(
+                ShortUrlLog.short_url_id == short_url_id,
+            )
+            .order_by(ShortUrlLog.use_at.desc())
+            .limit(limit)
+            .offset(offset)
+        )
+        return result.scalars().all()

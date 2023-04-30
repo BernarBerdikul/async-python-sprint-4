@@ -5,18 +5,6 @@ default_stages:
 exclude: ^.*\b(migrations|tests|static)\b.*$
 
 repos:
-  - repo: local
-    hooks:
-      - id: pytest
-        name: pytest
-        language: python
-        entry: docker-compose -f docker-compose.yml run --rm sprint_4_app pytest
-        pass_filenames: false
-        always_run: true
-        verbose: true
-        stages:
-          - push
-
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.4.0
     hooks:
@@ -27,6 +15,16 @@ repos:
       - id: check-json  # проверяет синтаксис .json файлов
       - id: check-case-conflict  # проверяет файлы, которые могут конфликтовать в файловых системах без учета регистра.
       - id: check-merge-conflict  # проверяет файлы, содержащие конфликтные строки слияния.
+
+  - repo: local
+    hooks:
+      - id: pytest
+        name: pytest
+        language: python
+        entry: make localtest
+        pass_filenames: false
+        always_run: true
+        verbose: true
 
   # Отсортировывает импорты в проекте
   - repo: https://github.com/pycqa/isort
@@ -50,13 +48,6 @@ repos:
       - id: flake8
         exclude: __init__.py
         args: [ "--ignore=F821", "--max-line-length=120" ]
-
-  # Проверка статических типов с помощью mypy
-  - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.2.0
-    hooks:
-      - id: mypy
-        exclude: tests/
 
   # Форматирует код под PEP8 c помощью black
   - repo: https://github.com/psf/black

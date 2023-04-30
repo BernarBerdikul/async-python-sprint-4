@@ -1,5 +1,6 @@
 from src.models import ShortUrl
-from factory import Factory, Faker
+from factory import Faker, Factory
+from factory.alchemy import SQLAlchemyModelFactory
 
 
 class ShortUrlFactory(Factory):

@@ -1,73 +1,20 @@
-from pydantic import HttpUrl
 from sqlmodel import Field, Relationship, SQLModel
 
 from src.models.mixins import UUIDMixin
 
-__all__ = (
-    "ShortUrl",
-    "ShortUrlCreate",
-    "ShortUrlBulkCreate",
-    "ShortUrlDetail",
-    "ShortUrlList",
-)
+__all__ = ("ShortUrl",)
 
 
-class ShortUrlBase(SQLModel):
-    """Short URL base model."""
+class ShortUrl(UUIDMixin, SQLModel, table=True):  # type: ignore
+    """Short URL model in database."""
+
+    __tablename__ = "short_url"  # noqa
 
     short_url: str = Field(
         nullable=False,
         unique=True,
         index=True,
     )
-
-
-class ShortUrlCreate(SQLModel):
-    """Short URL create model."""
-
-    original_url: HttpUrl
-
-    class Config:
-        schema_extra = {
-            "example": {
-                "original_url": "https://www.google.com/",
-            },
-        }
-
-
-class ShortUrlBulkCreate(SQLModel):
-    """Short URL bulk create model."""
-
-    urls: list[HttpUrl]
-
-    class Config:
-        schema_extra = {
-            "example": {
-                "urls": [
-                    "https://www.google.com/",
-                    "https://www.yandex.ru/",
-                ],
-            },
-        }
-
-
-class ShortUrlDetail(ShortUrlBase, UUIDMixin):
-    """Short URL detail model."""
-
-    original_url: HttpUrl
-
-
-class ShortUrlList(SQLModel):
-    """Short URL list model."""
-
-    __root__: list[ShortUrlDetail]
-
-
-class ShortUrl(UUIDMixin, ShortUrlBase, table=True):  # type: ignore
-    """Short URL model in database."""
-
-    __tablename__ = "short_url"  # noqa
-
     original_url: str = Field(nullable=False)
     usage_count: int = Field(
         title="Short URL usage count",
@@ -79,7 +26,7 @@ class ShortUrl(UUIDMixin, ShortUrlBase, table=True):  # type: ignore
         default=False,
         nullable=False,
     )
-    short_url_logs: list["ShortUrlLog"] = Relationship(  # type: ignore
+    logs: list["ShortUrlLog"] = Relationship(  # type: ignore
         back_populates="short_url",
         sa_relationship_kwargs={
             "uselist": True,

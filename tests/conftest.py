@@ -4,16 +4,13 @@ from typing import Generator
 import pytest
 import pytest_asyncio
 from httpx import AsyncClient
-from pytest_factoryboy import register
 from sqlalchemy.orm import sessionmaker
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from src.db.db import async_engine
 from src.main import app
+from src.models import ShortUrl
 from tests.factories.short_url import ShortUrlFactory
-
-
-register(ShortUrlFactory, "short_url")
 
 
 @pytest.fixture(scope="session")
@@ -23,7 +20,7 @@ def event_loop(request) -> Generator:  # noqa: indirect usage
     loop.close()
 
 
-@pytest_asyncio.fixture
+@pytest_asyncio.fixture(scope="function")
 async def async_client() -> AsyncClient:
     async with AsyncClient(app=app, base_url="http://test") as client:
         yield client
@@ -36,6 +33,14 @@ async def async_session() -> AsyncSession:
         expire_on_commit=False,
         class_=AsyncSession,
     )
-    async with session() as session:
-        yield session
+    yield session
     await async_engine.dispose()
+
+
+@pytest_asyncio.fixture(scope="function")
+async def short_url_instance(async_session) -> ShortUrl:
+    async with async_session() as session:
+        instance = ShortUrlFactory()
+        session.add(instance)
+        await session.commit()
+    yield instance

@@ -25,6 +25,8 @@ repos:
         pass_filenames: false
         always_run: true
         verbose: true
+        stages:
+          - push
 
   # Отсортировывает импорты в проекте
   - repo: https://github.com/pycqa/isort

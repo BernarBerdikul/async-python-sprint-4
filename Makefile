@@ -4,6 +4,9 @@ start: # Building Docker images and start
 test: # Start Docker test containers
 	docker compose -f docker-compose.test.yml up -d --build
 
+migrate:
+	poetry run alembic upgrade head
+
 localtest: #start pytest
 	poetry run pytest -vv
 

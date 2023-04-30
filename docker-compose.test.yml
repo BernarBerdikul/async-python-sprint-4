@@ -8,7 +8,8 @@ services:
       dockerfile: DockerfileTest
     environment:
       CONFIG_FILE: "config.test.yaml"
-    command: "pytest . -vv"
+    command: >
+      sh -c "poetry run alembic -c ./alembic.ini upgrade head && pytest . -vv"
     networks:
       - test_sprint_4_network
     depends_on:

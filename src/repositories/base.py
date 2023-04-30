@@ -14,16 +14,20 @@ ModelType = TypeVar("ModelType", bound=SQLModel)
 class AbstractRepository(ABC):
     session: AsyncSession
 
-    # @abstractmethod
-    # async def get(self, *args, **kwargs):
-    #     raise NotImplementedError
-    #
+    @abstractmethod
+    async def get(self, *args, **kwargs) -> ModelType:
+        raise NotImplementedError
+
     # @abstractmethod
     # async def list(self, *args, **kwargs):
     #     raise NotImplementedError
 
     @abstractmethod
     async def add(self, *args, **kwargs) -> ModelType:
+        raise NotImplementedError
+
+    @abstractmethod
+    async def bulk_add(self, *args, **kwargs) -> list[ModelType]:
         raise NotImplementedError
 
     # @abstractmethod

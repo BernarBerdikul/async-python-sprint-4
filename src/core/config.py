@@ -20,6 +20,7 @@ class App(BaseSettings):
     host: str
     port: int
     debug: bool
+    blacklist: list[str]
 
 
 class Postgres(BaseSettings):

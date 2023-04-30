@@ -6,6 +6,9 @@ app:
   host: 0.0.0.0
   port: 8000
   debug: true
+  blacklist:
+    - 192.168.1.0/24
+    - 172.16.0.0/12
 
 postgres:
   host: sprint_4_postgres_db

@@ -6,7 +6,9 @@ from src.models.mixins import UUIDMixin
 __all__ = (
     "ShortUrl",
     "ShortUrlCreate",
+    "ShortUrlBulkCreate",
     "ShortUrlDetail",
+    "ShortUrlList",
 )
 
 
@@ -33,8 +35,32 @@ class ShortUrlCreate(SQLModel):
         }
 
 
+class ShortUrlBulkCreate(SQLModel):
+    """Short URL bulk create model."""
+
+    urls: list[HttpUrl]
+
+    class Config:
+        schema_extra = {
+            "example": {
+                "urls": [
+                    "https://www.google.com/",
+                    "https://www.yandex.ru/",
+                ],
+            },
+        }
+
+
 class ShortUrlDetail(ShortUrlBase, UUIDMixin):
     """Short URL detail model."""
+
+    original_url: HttpUrl
+
+
+class ShortUrlList(SQLModel):
+    """Short URL list model."""
+
+    __root__: list[ShortUrlDetail]
 
 
 class ShortUrl(UUIDMixin, ShortUrlBase, table=True):  # type: ignore

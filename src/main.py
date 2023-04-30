@@ -11,7 +11,7 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from src import settings
 from src.api.v1 import api_v1_router
 from src.db.db import get_async_session
-from src.middlewares import add_process_time_header
+from src.middlewares import IPBlockMiddleware, add_process_time_header
 
 
 def create_app() -> FastAPI:
@@ -29,6 +29,7 @@ def create_app() -> FastAPI:
     )
     # Middlewares
     current_app.add_middleware(BaseHTTPMiddleware, dispatch=add_process_time_header)
+    current_app.add_middleware(IPBlockMiddleware, blacklist=settings.app.blacklist)
 
     # Routers
     current_app.include_router(api_v1_router)

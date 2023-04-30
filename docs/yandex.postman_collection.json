@@ -1,0 +1,285 @@
+{
+	"info": {
+		"_postman_id": "c1ae497f-df32-44f9-abb7-4540a02c01ba",
+		"name": "yandex",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "24396936"
+	},
+	"item": [
+		{
+			"name": "short-links",
+			"item": [
+				{
+					"name": "create",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Success answer\", function() {\r",
+									"    pm.response.to.have.status(201);  // Created!\r",
+									"});\r",
+									"\r",
+									"var responseJSON = JSON.parse(responseBody);\r",
+									"\r",
+									"tests['Response contains \"short_url\" property'] = responseJSON.hasOwnProperty('short_url');\r",
+									"\r",
+									"if(tests['Response contains \"short_url\" property']) {\r",
+									"    pm.environment.set('short_url', responseJSON.short_url);\r",
+									"}\r",
+									"\r",
+									"tests['Environment variable \"short_url\" has been set'] = pm.environment.get('short_url') === responseJSON.short_url;\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"original_url\": \"https://www.google.com/\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{LOCAL_URL}}/api/v1/short-urls/",
+							"host": [
+								"{{LOCAL_URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"short-urls",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "batch-add-urls",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Success answer\", function() {\r",
+									"    pm.response.to.have.status(201);  // Created!\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"urls\": [\r\n        \"https://www.google.com/\",\r\n        \"https://www.yandex.ru/\"\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{LOCAL_URL}}/api/v1/short-urls/batch-add-urls/",
+							"host": [
+								"{{LOCAL_URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"short-urls",
+								"batch-add-urls",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Success answer\", function() {\r",
+									"    pm.response.to.have.status(204);  // No content!\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{LOCAL_URL}}/api/v1/short-urls/{{short_url}}/",
+							"host": [
+								"{{LOCAL_URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"short-urls",
+								"{{short_url}}",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "detail",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Check if the status code is 410\r",
+									"pm.test(\"Status code is 410\", function () {\r",
+									"    if (pm.response.code === 410) {\r",
+									"        // Check that the response body has the correct detail\r",
+									"        var responseBody = pm.response.json();\r",
+									"        pm.expect(responseBody.detail).to.equal(\"Gone\");\r",
+									"    }\r",
+									"});\r",
+									"\r",
+									"// Check if the status code is 307\r",
+									"pm.test(\"Status code is 307\", function () {\r",
+									"    if (pm.response.code === 307) {\r",
+									"        // Check that the 'Location' header is present\r",
+									"        pm.expect(pm.response.headers.has(\"Location\")).to.be.true;\r",
+									"    }\r",
+									"});\r",
+									"\r",
+									"// Check if the status code is 404\r",
+									"pm.test(\"Status code is 410\", function () {\r",
+									"    if (pm.response.code === 404) {\r",
+									"        // Check that the response body has the correct detail\r",
+									"        var responseBody = pm.response.json();\r",
+									"        pm.expect(responseBody.detail).to.equal(\"Not Found\");\r",
+									"    }\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{LOCAL_URL}}/api/v1/short-urls/{{short_url}}/",
+							"host": [
+								"{{LOCAL_URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"short-urls",
+								"{{short_url}}",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "status",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Success answer\", function() {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{LOCAL_URL}}/api/v1/short-urls/{{short_url}}/status/?full-info=true&max-size=10&offset=0",
+							"host": [
+								"{{LOCAL_URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"short-urls",
+								"{{short_url}}",
+								"status",
+								""
+							],
+							"query": [
+								{
+									"key": "full-info",
+									"value": "true"
+								},
+								{
+									"key": "max-size",
+									"value": "10"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "ping",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Success answer\", function() {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{LOCAL_URL}}/ping/",
+					"host": [
+						"{{LOCAL_URL}}"
+					],
+					"path": [
+						"ping",
+						""
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

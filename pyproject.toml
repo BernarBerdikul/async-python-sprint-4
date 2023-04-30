@@ -4,7 +4,6 @@ version = "0.1.0"
 description = "sprint 4 in Async Python Course in Yandex Praktikum"
 authors = ["Bernar Berdikul <dabeerman32215@gmail.com>"]
 readme = "README.md"
-packages = [{include = "async_python_sprint_4"}]
 
 [tool.poetry.dependencies]
 python = "^3.11"

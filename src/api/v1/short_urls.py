@@ -90,7 +90,7 @@ async def get_short_url_detail(
 
 
 @router.get(
-    path="/{short_url}/status",
+    path="/{short_url}/status/",
     summary="Get short url status",
     status_code=http.HTTPStatus.OK,
 )

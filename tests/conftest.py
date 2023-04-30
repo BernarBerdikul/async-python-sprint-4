@@ -44,3 +44,12 @@ async def short_url_instance(async_session) -> ShortUrl:
         session.add(instance)
         await session.commit()
     yield instance
+
+
+@pytest_asyncio.fixture(scope="function")
+async def removed_short_url_instance(async_session) -> ShortUrl:
+    async with async_session() as session:
+        instance = ShortUrlFactory(is_removed=True)
+        session.add(instance)
+        await session.commit()
+    yield instance

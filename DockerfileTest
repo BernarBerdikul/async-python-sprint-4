@@ -18,7 +18,7 @@ RUN apt-get update && \
         libpq-dev \
     # install packages
     && python -m pip install --upgrade pip \
-    && pip install poetry \
+    && pip install poetry==1.3.1 \
     && poetry config virtualenvs.create false \
     && poetry install --no-interaction --no-ansi --no-root \
     # clean

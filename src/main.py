@@ -45,12 +45,7 @@ async def ping(session: AsyncSession = Depends(get_async_session)):
         # Выполните любой запрос, чтобы проверить доступность БД
         result = await session.scalar(sa.select(sa.text("version();")))
         return {"status": "OK", "version": result}
-    except OperationalError as e:
-        return HTTPException(
-            status_code=http.HTTPStatus.INTERNAL_SERVER_ERROR,
-            detail={"status": "ERROR", "detail": str(e)},
-        )
-    except DatabaseError as e:
+    except (OperationalError, DatabaseError) as e:
         return HTTPException(
             status_code=http.HTTPStatus.INTERNAL_SERVER_ERROR,
             detail={"status": "ERROR", "detail": str(e)},

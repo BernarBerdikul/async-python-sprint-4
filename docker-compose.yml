@@ -1,4 +1,4 @@
-version: "3.8"
+version: "3.9"
 
 services:
   sprint_4_app:
@@ -14,7 +14,7 @@ services:
     networks:
       - sprint_4_network
     ports:
-      - "8000:8000"
+      - "${APP_PUBLIC_PORT:-8000}:8000"
     depends_on:
       sprint_4_postgres_db:
         condition: service_healthy
@@ -31,7 +31,7 @@ services:
     expose:
       - 5432
     ports:
-      - "5432:5432"
+      - "${DB_PUBLIC_PORT:-5432}:5432"
     networks:
       - sprint_4_network
     healthcheck:

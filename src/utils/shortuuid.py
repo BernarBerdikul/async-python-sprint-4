@@ -9,9 +9,10 @@ class ShortUUID:
     A generator class for PEP-412-compliant short UUIDs.
     """
 
+    ALPHABET = "23456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"
+
     def __init__(self) -> None:
-        alphabet = "23456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"
-        self._alphabet = list(sorted(set(alphabet)))
+        self._alphabet = list(sorted(set(self.ALPHABET)))
         self._alpha_len = len(self._alphabet)
         self._length = int(math.ceil(math.log(2**128, self._alpha_len)))
 
